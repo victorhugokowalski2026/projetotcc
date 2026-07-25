@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <title>MinimalShop | Sua Loja de Tecnologia</title>
+    <title>CArShop | Sua Loja de Tecnologia</title>
 </head>
 <body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen font-sans antialiased">
 
