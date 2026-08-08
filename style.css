@@ -290,3 +290,10 @@ footer{
    text-align: center; 
 }
     
+.oauthButton {
+   text-align: center; 
+}
+
+.oauthButton::before {
+   text-align: center; 
+}
