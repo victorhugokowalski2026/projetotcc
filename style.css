@@ -1,3 +1,27 @@
+/* ============================================
+   CONSTRULINK — Design "Canteiro de Obras"
+   Paleta: concreto + laranja de segurança + amarelo de atenção
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+    /* Cor */
+    --concreto: #E7E3D8;
+    --concreto-escuro: #D3CDBE;
+    --tinta: #23262B;
+    --aco: #3E4750;
+    --aco-escuro: #262B31;
+    --laranja: #E8592A;
+    --laranja-escuro: #C2481F;
+    --amarelo: #F2B705;
+    --superficie: #FBFAF6;
+
+    /* Tipografia */
+    --fonte-display: 'Oswald', Impact, sans-serif;
+    --fonte-corpo: 'Work Sans', Arial, sans-serif;
+    --fonte-mono: 'IBM Plex Mono', 'Courier New', monospace;
+}
 
 *{
     margin: 0;
@@ -6,200 +30,184 @@
 }
 
 body{
-    font-family: Arial, Helvetica, bold;
-    background-color: #FDAE9C;
-    color: #333;
+    font-family: var(--fonte-corpo);
+    background-color: var(--concreto);
+    background-image:
+        radial-gradient(circle at 1px 1px, rgba(35,38,43,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+    color: var(--tinta);
     line-height: 1.6;
 }
 
-.form {
-  --background: #d3d3d3;
-  --input-focus: #2d8cf0;
-  --font-color: #323232;
-  --font-color-sub: #666;
-  --bg-color: #fff;
-  --main-color: #323232;
-  padding: 20px;
-  background: var(--background);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 20px;
-  border-radius: 5px;
-  border: 2px solid var(--main-color);
-  box-shadow: 4px 4px var(--main-color);
+/* Faixa de alerta reutilizável — o "elemento assinatura" do site,
+   como a fita zebrada de uma obra. Usada apenas para "arrematar" o topo
+   e a base da página, nunca no meio do conteúdo. */
+.faixa-risco, header, footer{
+    position: relative;
+}
+header::after, footer::before{
+    content: "";
+    display: block;
+    height: 6px;
+    background: repeating-linear-gradient(
+        135deg,
+        var(--amarelo) 0 14px,
+        var(--tinta) 14px 28px
+    );
 }
 
-.form > p {
-  font-family: var(--font-DelaGothicOne);
-  color: var(--font-color);
-  font-weight: 700;
-  font-size: 20px;
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
+/* Títulos genéricos — tratamento "estêncil" com marcação tipo trena
+   embaixo, usado em qualquer h2 solto (páginas internas sem section). */
+h2{
+    font-family: var(--fonte-display);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    color: var(--tinta);
+    text-align: center;
+    margin: 48px 8% 32px;
+    position: relative;
+    padding-bottom: 18px;
+}
+h2::after{
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 6px;
+    background-image: repeating-linear-gradient(
+        90deg,
+        var(--laranja) 0 3px,
+        transparent 3px 12px
+    );
 }
 
-.form > p > span {
-  font-family: var(--font-SpaceMono);
-  color: var(--font-color-sub);
-  font-weight: 600;
-  font-size: 17px;
+p{
+    color: var(--aco);
+    max-width: 640px;
+    margin: 0 auto 16px;
+    padding: 0 8%;
+    text-align: center;
 }
-
-.separator {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-
-.separator > div {
-  width: 100px;
-  height: 3px;
-  border-radius: 5px;
-  background-color: var(--font-color-sub);
-}
-
-.separator > span {
-  color: var(--font-color);
-  font-family: var(--font-SpaceMono);
-  font-weight: 600;
-}
-
-.oauthButton {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-    /* margin: 50px auto 0 auto; */
-  padding: auto 15px 15px auto;
-  width: 250px;
-  height: 40px;
-  border-radius: 5px;
-  border: 2px solid var(--main-color);
-  background-color: var(--bg-color);
-  box-shadow: 4px 4px var(--main-color);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--font-color);
-  cursor: pointer;
-  transition: all 250ms;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.oauthButton::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0;
-  background-color: #212121;
-  z-index: -1;
-  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
-  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
-  transition: all 250ms;
-}
-
-.oauthButton:hover {
-  color: #e8e8e8;
-}
-
-.oauthButton:hover::before {
-  width: 100%;
-}
-
-.form > input {
-  width: 250px;
-  height: 40px;
-  border-radius: 5px;
-  border: 2px solid var(--main-color);
-  background-color: var(--bg-color);
-  box-shadow: 4px 4px var(--main-color);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--font-color);
-  padding: 5px 10px;
-  outline: none;
-}
-
-.icon {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-
-
-
 
 /*Cabecalho*/
 header{
-    background-color: #ff6b00;
+    background-color: var(--aco-escuro);
     color: #fff;
-    padding: 20px 8%;
+    padding: 22px 8% 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 .logo h1{
+    font-family: var(--fonte-display);
     font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #fff;
 }
 
+.logo h1::after{
+    content: "";
+    display: block;
+    width: 46px;
+    height: 4px;
+    margin-top: 6px;
+    background: var(--laranja);
+}
+
+/* Navegação — funciona tanto dentro do <header> (página inicial)
+   quanto sozinha nas páginas internas, onde não há header por trás. */
+nav{
+    display: flex;
+    justify-content: center;
+}
 nav ul{
     list-style: none;
     display: flex;
-    gap: 25px;
+    flex-wrap: wrap;
+    gap: 8px 6px;
+    background: var(--laranja);
+    padding: 10px 14px;
+    border-radius: 4px;
 }
 
 nav a{
+    display: inline-block;
     text-decoration: none;
     color: #fff;
-    font-weight: bold;
-    transition: 0.3s;
+    font-family: var(--fonte-display);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 3px;
+    transition: background-color 0.25s, color 0.25s;
 }
 
 nav a:hover{
-    color: #ffe600;
+    background-color: var(--tinta);
+    color: var(--amarelo);
+}
+
+/* Marca a página atual no menu */
+nav a.ativo{
+    background-color: var(--tinta);
+    color: var(--amarelo);
 }
 
 /*Banner*/
 
 .banner{
     text-align: center;
-    padding: 120px 20px;
-    background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)),
+    padding: 130px 20px;
+    background: linear-gradient(rgba(35,38,43,.72), rgba(35,38,43,.72)),
                 url("img/banner.jpg") center/cover no-repeat;
     color: white;
 }
 
 .banner h2{
     font-size: 3rem;
-    margin-bottom: 20px;
+    color: #fff;
+    margin-top: 0;
+}
+.banner h2::after{
+    background-image: repeating-linear-gradient(
+        90deg,
+        var(--amarelo) 0 3px,
+        transparent 3px 12px
+    );
 }
 
 .banner p{
-    font-size: 1.2rem;
+    font-family: var(--fonte-corpo);
+    font-size: 1.15rem;
+    color: #EDEAE2;
     margin-bottom: 30px;
 }
 
 .banner a{
     display: inline-block;
-    background-color: #ff6b00;
+    background-color: var(--laranja);
     color: white;
     text-decoration: none;
+    font-family: var(--fonte-display);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     padding: 15px 35px;
-    border-radius: 5px;
-    transition: 0.3s;
+    border-radius: 4px;
+    transition: background-color 0.25s, transform 0.15s;
 }
 
 .banner a:hover{
-    background-color: #e65c00;
+    background-color: var(--laranja-escuro);
+    transform: translateY(-2px);
 }
 
 /*Categorias*/
@@ -209,17 +217,31 @@ nav a:hover{
 }
 
 .categorias h2{
-    text-align: center;
-    margin-bottom: 40px;
+    margin-top: 0;
 }
 
 .categoria{
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
+    background: var(--superficie);
+    padding: 30px 20px;
+    border-radius: 6px;
     text-align: center;
     margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    border: 1px solid var(--concreto-escuro);
+    border-left: 5px solid var(--laranja);
+    box-shadow: 0 2px 8px rgba(35,38,43,.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.categoria:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(35,38,43,.14);
+}
+
+.categoria h3{
+    font-family: var(--fonte-display);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--tinta);
 }
 
 /*Produtos*/
@@ -229,71 +251,229 @@ nav a:hover{
 }
 
 .produtos h2{
-    text-align: center;
-    margin-bottom: 40px;
+    margin-top: 0;
 }
 
 .produto{
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
+    background: var(--superficie);
+    padding: 22px 20px 26px;
+    border-radius: 6px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    border: 1px solid var(--concreto-escuro);
+    box-shadow: 0 2px 8px rgba(35,38,43,.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.produto:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(35,38,43,.14);
 }
 
 .produto img{
     width: 100%;
     max-width: 220px;
     margin-bottom: 15px;
+    border-radius: 4px;
 }
 
 .produto h3{
+    font-family: var(--fonte-display);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
     margin-bottom: 10px;
+    color: var(--tinta);
 }
 
 .produto p{
-    color: #ff6b00;
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-family: var(--fonte-mono);
+    color: var(--laranja-escuro);
+    font-size: 1.15rem;
+    font-weight: 600;
     margin-bottom: 15px;
+    padding: 0;
+}
+
+.produto p del{
+    font-family: var(--fonte-mono);
+    color: var(--aco);
+    opacity: 0.6;
+    margin-right: 8px;
+}
+.produto p strong{
+    color: var(--laranja-escuro);
 }
 
 .produto button{
-    background-color: #ff6b00;
+    background-color: var(--laranja);
     color: white;
     border: none;
+    font-family: var(--fonte-display);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     padding: 12px 25px;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: background-color 0.25s;
 }
 
 .produto button:hover{
-    background-color: #e65c00;
+    background-color: var(--laranja-escuro);
+}
+
+/*Sobre*/
+.sobre{
+    padding: 20px 8% 60px;
+}
+
+/*Contato*/
+.contato{
+    text-align: center;
+    padding-top: 20px;
 }
 
 /*Rodape*/
 
 footer{
-    background-color: #222;
-    color: white;
+    background-color: var(--aco-escuro);
+    color: #EDEAE2;
     text-align: center;
-    padding: 20px;
-    margin-top: 60px;
+    padding: 24px 20px;
+    margin-top: 70px;
+    font-family: var(--fonte-corpo);
+    font-size: 0.9rem;
 }
 
-.contato {
-  text-align: center;
+/* ===== Formulário (cadastro / contato) ===== */
+
+.form{
+    --background: var(--superficie);
+    --input-focus: var(--laranja);
+    --font-color: var(--tinta);
+    --font-color-sub: var(--aco);
+    --bg-color: #fff;
+    --main-color: var(--tinta);
+    max-width: 340px;
+    margin: 0 auto 40px;
+    padding: 26px;
+    background: var(--background);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    border-radius: 6px;
+    border: 2px solid var(--main-color);
+    box-shadow: 5px 5px 0 var(--laranja);
 }
 
-.form {
-   text-align: center; 
-}
-    
-.oauthButton {
-   text-align: center; 
+.form > p{
+    font-family: var(--fonte-display);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--font-color);
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
 }
 
-.oauthButton::before {
-   text-align: center; 
+.form > p > span{
+    font-family: var(--fonte-mono);
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--font-color-sub);
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.separator{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.separator > div{
+    width: 100px;
+    height: 2px;
+    border-radius: 5px;
+    background-color: var(--concreto-escuro);
+}
+
+.separator > span{
+    color: var(--font-color-sub);
+    font-family: var(--fonte-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.oauthButton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 0 15px;
+    width: 250px;
+    height: 42px;
+    border-radius: 4px;
+    border: 2px solid var(--main-color);
+    background-color: var(--bg-color);
+    box-shadow: 3px 3px 0 var(--main-color);
+    font-family: var(--fonte-corpo);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--font-color);
+    cursor: pointer;
+    transition: all 200ms;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.oauthButton::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background-color: var(--tinta);
+    z-index: -1;
+    transition: width 200ms;
+}
+
+.oauthButton:hover{
+    color: var(--amarelo);
+}
+
+.oauthButton:hover::before{
+    width: 100%;
+}
+
+.form > input{
+    width: 250px;
+    height: 42px;
+    border-radius: 4px;
+    border: 2px solid var(--main-color);
+    background-color: var(--bg-color);
+    font-family: var(--fonte-corpo);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--font-color);
+    padding: 5px 12px;
+    outline: none;
+    transition: border-color 150ms;
+}
+.form > input:focus{
+    border-color: var(--input-focus);
+}
+
+.icon{
+    width: 1.4rem;
+    height: 1.4rem;
+    flex-shrink: 0;
 }
