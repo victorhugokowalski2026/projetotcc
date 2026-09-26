@@ -1,20 +1,5 @@
-# ============================================================
-# Faz o servidor Apache interpretar arquivos .html como PHP,
-# necessário porque as páginas (.html) contêm código <?php ?>.
-#
-# IMPORTANTE: a diretiva certa depende de como o PHP está
-# configurado no servidor/hospedagem. Deixe UMA das duas opções
-# abaixo ativa (a outra comentada) — teste qual funciona no seu
-# ambiente.
-# ============================================================
-
-# Opção A — servidores com mod_php (Apache clássico, XAMPP, WAMP,
-# hospedagens compartilhadas mais simples). Normalmente é essa.
-AddType application/x-httpd-php .html
-
-# Opção B — servidores que usam PHP-FPM (comum em hospedagens
-# mais novas). Se a Opção A não funcionar, comente a linha acima
-# e descomente as linhas abaixo:
-# <FilesMatch \.html$>
-#     SetHandler application/x-httpd-php
-# </FilesMatch>
+# Bloqueia a execução de qualquer script dentro de /uploads —
+# só arquivos de imagem devem ser servidos daqui.
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|pl|py|jsp|asp|aspx|sh|cgi)$">
+    Require all denied
+</FilesMatch>
