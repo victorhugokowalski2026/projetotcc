@@ -1,0 +1,48 @@
+[
+    {
+        "id": 1,
+        "nome": "Cimento Votoran 50kg",
+        "preco": 34.90,
+        "imagem": "cimento.jpg",
+        "categoria": "Cimento",
+        "ativo": true,
+        "destaque": true,
+        "promocao": false,
+        "estoque": 120
+    },
+    {
+        "id": 2,
+        "nome": "Furadeira de Impacto DeWalt 550W",
+        "preco": 289.90,
+        "precoAntigo": 349.90,
+        "imagem": "furadeira.jpg",
+        "categoria": "Ferramentas",
+        "ativo": true,
+        "destaque": true,
+        "promocao": true,
+        "estoque": 15
+    },
+    {
+        "id": 3,
+        "nome": "Tinta Acrílica Premium Smartop 18L",
+        "preco": 249.90,
+        "imagem": "tinta.jpg",
+        "categoria": "Tintas",
+        "ativo": true,
+        "destaque": true,
+        "promocao": false,
+        "estoque": 30
+    },
+    {
+        "id": 4,
+        "nome": "Jogo de Ferramentas Completo 150 peças",
+        "preco": 399.90,
+        "precoAntigo": 499.90,
+        "imagem": "promocao.jpg",
+        "categoria": "Ferramentas",
+        "ativo": true,
+        "destaque": false,
+        "promocao": true,
+        "estoque": 0
+    }
+]

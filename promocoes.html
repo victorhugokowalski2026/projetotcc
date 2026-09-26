@@ -1,46 +1,62 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Promoções - Construlink</title>
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <h1>Construlink</h1>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Início</a></li>
-                <li><a href="produtos.html">Produtos</a></li>
-                <li><a href="categorias.html">Categorias</a></li>
-                <li><a href="promocoes.html" class="ativo">Promoções</a></li>
-                <li><a href="sobre.html">Sobre</a></li>
-                <li><a href="contato.html">Contato</a></li>
-            </ul>
-        </nav>
-    </header>
+<?php
+// ============================================================
+// LÓGICA (PHP) — equipe de back-end
+// ============================================================
+require_once 'includes/banco_ficticio.php';
 
-    <main>
-        <div class="produtos">
-            <h2>Promoções da Semana</h2>
+$totalItens = contarItensCarrinho();
+$todosAtivos = listarProdutosAtivos();
+$promocoes = array_filter($todosAtivos, function ($p) {
+    return isset($p['promocao']) && $p['promocao'] === true;
+});
 
-            <article class="produto">
-                <img src="img/furadeira.jpg" alt="Furadeira Bosch em promoção">
-                <h3>Furadeira Bosch</h3>
-                <p>
-                    <del>R$349,90</del>
-                    <strong>R$289,90</strong>
-                </p>
-                <button>Comprar</button>
-            </article>
-        </div>
-    </main>
+$tituloPagina = 'Promoções - Construlink';
+$paginaAtiva = 'promocoes';
+require 'includes/header.php';
+?>
+<!-- ============================================================
+     HTML/CSS — equipe de front-end mexe livremente aqui
+     ============================================================ -->
 
-    <footer>
-        <p>&copy; 2026 Construlink - Todos os direitos reservados.</p>
-    </footer>
-</body>
-</html>
+<div class="produtos">
+    <h2>Promoções da Semana</h2>
+
+    <?php if (isset($_GET['adicionado'])): ?>
+        <p class="mensagem-sucesso">Produto adicionado ao carrinho!</p>
+    <?php endif; ?>
+    <?php if (isset($_GET['semestoque'])): ?>
+        <p class="mensagem-erro">Não há mais estoque suficiente desse produto.</p>
+    <?php endif; ?>
+
+    <?php if (empty($promocoes)): ?>
+        <p>Nenhuma promoção ativa no momento.</p>
+    <?php endif; ?>
+
+    <?php foreach ($promocoes as $produto): ?>
+        <article class="produto">
+            <img src="<?php echo htmlspecialchars($produto['imagem']); ?>" alt="<?php echo htmlspecialchars($produto['nome']); ?>">
+            <h3><?php echo htmlspecialchars($produto['nome']); ?></h3>
+            <p>
+                <?php if (!empty($produto['precoAntigo'])): ?>
+                    <del>R$ <?php echo number_format($produto['precoAntigo'], 2, ',', '.'); ?></del>
+                <?php endif; ?>
+                <strong>R$ <?php echo number_format($produto['preco'], 2, ',', '.'); ?></strong>
+            </p>
+            <?php if (($produto['estoque'] ?? 0) > 0): ?>
+                <?php if ($produto['estoque'] <= 5): ?>
+                    <p class="aviso-estoque">Restam <?php echo $produto['estoque']; ?> unidades</p>
+                <?php endif; ?>
+                <form action="carrinho.html" method="post">
+                    <input type="hidden" name="acao" value="adicionar">
+                    <input type="hidden" name="produto_id" value="<?php echo $produto['id']; ?>">
+                    <input type="hidden" name="origem" value="promocoes.html">
+                    <button type="submit">Comprar</button>
+                </form>
+            <?php else: ?>
+                <button type="button" class="btn-esgotado" disabled>Esgotado</button>
+            <?php endif; ?>
+        </article>
+    <?php endforeach; ?>
+</div>
+
+<?php require 'includes/footer.php'; ?>

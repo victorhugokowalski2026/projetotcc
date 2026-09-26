@@ -1,0 +1,44 @@
+<?php
+// ============================================================
+// LÓGICA (PHP) — equipe de back-end
+// ============================================================
+require_once 'includes/banco_ficticio.php';
+
+$nome = $_POST['nome'] ?? '';
+$email = $_POST['email'] ?? '';
+$telefone = $_POST['telefone'] ?? '';
+
+$novoUsuario = [
+    "nome" => $nome,
+    "email" => $email,
+    "telefone" => $telefone,
+];
+
+$arquivo = 'usuarios.json';
+if (file_exists($arquivo)) {
+    $dados = json_decode(file_get_contents($arquivo), true);
+} else {
+    $dados = [];
+}
+
+$dados[] = $novoUsuario;
+file_put_contents($arquivo, json_encode($dados, JSON_PRETTY_PRINT));
+
+$totalItens = contarItensCarrinho();
+$tituloPagina = 'Cadastro realizado - Construlink';
+$paginaAtiva = 'contato';
+require 'includes/header.php';
+?>
+<!-- ============================================================
+     HTML/CSS — equipe de front-end mexe livremente aqui
+     ============================================================ -->
+
+<div class="contato">
+    <h2>Cadastro realizado com sucesso!</h2>
+    <p>Nome: <?php echo htmlspecialchars($nome); ?></p>
+    <p>Email: <?php echo htmlspecialchars($email); ?></p>
+    <p>Telefone: <?php echo htmlspecialchars($telefone); ?></p>
+    <p><a href="contato.html">Voltar</a></p>
+</div>
+
+<?php require 'includes/footer.php'; ?>

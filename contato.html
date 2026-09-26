@@ -1,49 +1,33 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Contato - Construlink</title>
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <h1>Construlink</h1>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Início</a></li>
-                <li><a href="produtos.html">Produtos</a></li>
-                <li><a href="categorias.html">Categorias</a></li>
-                <li><a href="promocoes.html">Promoções</a></li>
-                <li><a href="sobre.html">Sobre</a></li>
-                <li><a href="contato.html" class="ativo">Contato</a></li>
-            </ul>
-        </nav>
-    </header>
+<?php
+// ============================================================
+// LÓGICA (PHP) — equipe de back-end
+// ============================================================
+require_once 'includes/banco_ficticio.php';
+$totalItens = contarItensCarrinho();
 
-    <main>
-        <div class="contato">
-            <h2>Entre em Contato</h2>
-            <p>Telefone: (44) 99774-2905</p>
-            <p>Email: contato@construlink.com.br</p>
-            <p>Endereço: Rua Arlindo Neves 355 - Centro</p>
+$tituloPagina = 'Contato - Construlink';
+$paginaAtiva = 'contato';
+require 'includes/header.php';
+?>
+<!-- ============================================================
+     HTML/CSS — equipe de front-end mexe livremente aqui
+     ============================================================ -->
 
-            <form action="cadastro.php" method="POST" class="form">
-                <p>
-                    Fale conosco<span>Preencha seus dados de contato</span>
-                </p>
-                <input type="text" name="nome" placeholder="Nome" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="tel" name="telefone" placeholder="Telefone" required>
-                <button type="submit" class="oauthButton">Enviar</button>
-            </form>
-        </div>
-    </main>
+<div class="contato">
+    <h2>Entre em Contato</h2>
+    <p>Telefone: (44) 99774-2905</p>
+    <p>Email: contato@construlink.com.br</p>
+    <p>Endereço: Rua Arlindo Neves 355 - Centro</p>
 
-    <footer>
-        <p>&copy; 2026 Construlink - Todos os direitos reservados.</p>
-    </footer>
-</body>
-</html>
+    <form action="cadastro.html" method="POST" class="form">
+        <p>
+            Fale conosco<span>Preencha seus dados de contato</span>
+        </p>
+        <input type="text" name="nome" placeholder="Nome" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="tel" name="telefone" placeholder="Telefone" required>
+        <button type="submit" class="oauthButton">Enviar</button>
+    </form>
+</div>
+
+<?php require 'includes/footer.php'; ?>

@@ -1,6 +1,11 @@
 /* ============================================
    CONSTRULINK — Design "Canteiro de Obras"
    Paleta: concreto + laranja de segurança + amarelo de atenção
+
+   Equipe de HTML/CSS: este arquivo é 100% de vocês.
+   Todas as classes usadas nos .php estão aqui (nav, .produto,
+   .categoria, .form, .tabela-carrinho, .mensagem-sucesso,
+   .mensagem-erro, .aviso-estoque, .btn-esgotado etc.)
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
@@ -221,6 +226,7 @@ nav a.ativo{
 }
 
 .categoria{
+    display: block;
     background: var(--superficie);
     padding: 30px 20px;
     border-radius: 6px;
@@ -230,6 +236,9 @@ nav a.ativo{
     border-left: 5px solid var(--laranja);
     box-shadow: 0 2px 8px rgba(35,38,43,.08);
     transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
 }
 
 .categoria:hover{
@@ -476,4 +485,267 @@ footer{
     width: 1.4rem;
     height: 1.4rem;
     flex-shrink: 0;
+}
+
+/* ===== Carrinho ===== */
+
+.carrinho{
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 8%;
+}
+
+.mensagem-sucesso{
+    background: #E8F5E9;
+    color: #2E7D32;
+    border: 1px solid #2E7D32;
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 0 auto 24px;
+    max-width: 600px;
+    text-align: center;
+}
+
+.tabela-carrinho{
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--superficie);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(35,38,43,.08);
+}
+
+.tabela-carrinho th,
+.tabela-carrinho td{
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--concreto-escuro);
+}
+
+.tabela-carrinho th{
+    background: var(--aco-escuro);
+    color: #fff;
+    font-family: var(--fonte-display);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.85rem;
+}
+
+.produto-nome{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.produto-nome img{
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.form-quantidade input[type="number"]{
+    width: 60px;
+    padding: 6px 8px;
+    border: 1px solid var(--concreto-escuro);
+    border-radius: 4px;
+}
+
+.btn-remover{
+    background: none;
+    border: 1px solid var(--laranja-escuro);
+    color: var(--laranja-escuro);
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-remover:hover{
+    background-color: var(--laranja-escuro);
+    color: #fff;
+}
+
+.carrinho-total{
+    text-align: right;
+    font-family: var(--fonte-display);
+    font-size: 1.3rem;
+    margin: 20px 0;
+    color: var(--tinta);
+}
+
+.carrinho form{
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ===== Estoque ===== */
+
+.mensagem-erro{
+    background: #FDECEA;
+    color: #C62828;
+    border: 1px solid #C62828;
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 0 auto 24px;
+    max-width: 600px;
+    text-align: center;
+}
+
+.aviso-estoque{
+    font-family: var(--fonte-mono);
+    color: var(--laranja-escuro);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.btn-esgotado{
+    background-color: var(--concreto-escuro);
+    color: var(--aco);
+    border: none;
+    font-family: var(--fonte-display);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 12px 25px;
+    border-radius: 4px;
+    cursor: not-allowed;
+}
+
+.filtro-categoria{
+    margin-top: -16px;
+    margin-bottom: 24px;
+}
+.filtro-categoria a{
+    color: var(--laranja-escuro);
+    font-weight: 600;
+    text-decoration: none;
+}
+.filtro-categoria a:hover{
+    text-decoration: underline;
+}
+
+/* ===== Painel Admin ===== */
+
+.painel-admin{
+    max-width: 1000px;
+    margin: 40px auto 60px;
+    padding: 0 6%;
+}
+
+.painel-admin h2{
+    text-align: left;
+    margin: 0 0 20px;
+    padding-bottom: 0;
+}
+.painel-admin h2::after{
+    display: none;
+}
+
+.barra-acoes{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.barra-acoes h2{
+    margin: 0;
+}
+
+.form-admin{
+    max-width: 480px;
+    margin: 0 auto 60px;
+    background: var(--superficie);
+    border: 2px solid var(--tinta);
+    border-radius: 6px;
+    box-shadow: 5px 5px 0 var(--laranja);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-admin label{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: var(--fonte-corpo);
+    font-weight: 600;
+    color: var(--tinta);
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.form-admin label.checkbox{
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+.form-admin label.checkbox input{
+    width: auto;
+}
+
+.form-admin input[type="text"],
+.form-admin input[type="number"],
+.form-admin input[type="file"],
+.form-admin select{
+    border: 2px solid var(--tinta);
+    border-radius: 4px;
+    padding: 9px 10px;
+    font-family: var(--fonte-corpo);
+    font-size: 15px;
+    background: #fff;
+}
+
+.painel-admin .tabela-carrinho{
+    width: 100%;
+}
+
+.miniatura{
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.form-estoque{
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: flex-start;
+}
+.form-estoque input[type="number"]{
+    width: 70px;
+    padding: 6px 8px;
+    border: 1px solid var(--concreto-escuro);
+    border-radius: 4px;
+}
+.form-estoque button{
+    background-color: var(--laranja);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--fonte-corpo);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+.form-estoque button:hover{
+    background-color: var(--laranja-escuro);
+}
+
+.link-admin{
+    color: var(--laranja-escuro);
+    font-weight: 600;
+    text-decoration: none;
+    margin-right: 12px;
+}
+.link-admin:hover{
+    text-decoration: underline;
 }

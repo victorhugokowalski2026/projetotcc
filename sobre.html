@@ -1,38 +1,22 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Sobre - Construlink</title>
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <h1>Construlink</h1>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Início</a></li>
-                <li><a href="produtos.html">Produtos</a></li>
-                <li><a href="categorias.html">Categorias</a></li>
-                <li><a href="promocoes.html">Promoções</a></li>
-                <li><a href="sobre.html" class="ativo">Sobre</a></li>
-                <li><a href="contato.html">Contato</a></li>
-            </ul>
-        </nav>
-    </header>
+<?php
+// ============================================================
+// LÓGICA (PHP) — equipe de back-end
+// ============================================================
+require_once 'includes/banco_ficticio.php';
+$totalItens = contarItensCarrinho();
 
-    <main>
-        <div class="sobre">
-            <h2>Sobre a Construlink</h2>
-            <p>A Construlink nasceu com o objetivo de fornecer materiais para construção com qualidade, preço justo e atendimento especializado.</p>
-            <p>Trabalhamos com as melhores marcas do mercado para oferecer segurança e confiança em sua obra.</p>
-        </div>
-    </main>
+$tituloPagina = 'Sobre - Construlink';
+$paginaAtiva = 'sobre';
+require 'includes/header.php';
+?>
+<!-- ============================================================
+     HTML/CSS — equipe de front-end mexe livremente aqui
+     ============================================================ -->
 
-    <footer>
-        <p>&copy; 2026 Construlink - Todos os direitos reservados.</p>
-    </footer>
-</body>
-</html>
+<div class="sobre">
+    <h2>Sobre a Construlink</h2>
+    <p>A Construlink nasceu com o objetivo de fornecer materiais para construção com qualidade, preço justo e atendimento especializado.</p>
+    <p>Trabalhamos com as melhores marcas do mercado para oferecer segurança e confiança em sua obra.</p>
+</div>
+
+<?php require 'includes/footer.php'; ?>

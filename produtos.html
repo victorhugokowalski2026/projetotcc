@@ -1,52 +1,68 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Produtos - Construlink</title>
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <h1>Construlink</h1>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Início</a></li>
-                <li><a href="produtos.html" class="ativo">Produtos</a></li>
-                <li><a href="categorias.html">Categorias</a></li>
-                <li><a href="promocoes.html">Promoções</a></li>
-                <li><a href="sobre.html">Sobre</a></li>
-                <li><a href="contato.html">Contato</a></li>
-            </ul>
-        </nav>
-    </header>
+<?php
+// ============================================================
+// LÓGICA (PHP) — equipe de back-end
+// ============================================================
+require_once 'includes/banco_ficticio.php';
 
-    <main>
-        <div class="produtos">
-            <h2>Todos os Produtos</h2>
+$totalItens = contarItensCarrinho();
+$produtos = listarProdutosAtivos();
 
-            <article class="produto">
-                <img src="cimento.jpg" alt="Saco de cimento CP II">
-                <h3>Cimento CP II</h3>
-                <p>R$ 39,90</p>
-                <button>Comprar</button>
-            </article>
+// Se veio ?categoria=Cimento na URL (clique num card de categoria),
+// filtra a lista só com os produtos daquela categoria.
+$categoriaSelecionada = trim($_GET['categoria'] ?? '');
+if ($categoriaSelecionada !== '') {
+    $produtos = array_filter($produtos, function ($p) use ($categoriaSelecionada) {
+        return isset($p['categoria']) && $p['categoria'] === $categoriaSelecionada;
+    });
+}
 
-            <article class="produto">
-                <img src="tinta.jpg" alt="Lata de tinta acrílica">
-                <h3>Tinta Acrílica</h3>
-                <p>R$ 149,90</p>
-                <button>Comprar</button>
-            </article>
+$tituloPagina = 'Produtos - Construlink';
+$paginaAtiva = 'produtos';
+require 'includes/header.php';
+?>
+<!-- ============================================================
+     HTML/CSS — equipe de front-end mexe livremente aqui
+     ============================================================ -->
 
-            <!-- adicionar mais produtos -->
-        </div>
-    </main>
+<div class="produtos">
+    <?php if ($categoriaSelecionada !== ''): ?>
+        <h2><?php echo htmlspecialchars($categoriaSelecionada); ?></h2>
+        <p class="filtro-categoria"><a href="produtos.html">&larr; Ver todos os produtos</a></p>
+    <?php else: ?>
+        <h2>Todos os Produtos</h2>
+    <?php endif; ?>
 
-    <footer>
-        <p>&copy; 2026 Construlink - Todos os direitos reservados.</p>
-    </footer>
-</body>
-</html>
+    <?php if (isset($_GET['adicionado'])): ?>
+        <p class="mensagem-sucesso">Produto adicionado ao carrinho!</p>
+    <?php endif; ?>
+    <?php if (isset($_GET['semestoque'])): ?>
+        <p class="mensagem-erro">Não há mais estoque suficiente desse produto.</p>
+    <?php endif; ?>
+
+    <?php if ($categoriaSelecionada !== '' && empty($produtos)): ?>
+        <p>Nenhum produto encontrado nessa categoria no momento.</p>
+    <?php endif; ?>
+
+    <?php foreach ($produtos as $produto): ?>
+        <article class="produto">
+            <img src="<?php echo htmlspecialchars($produto['imagem']); ?>" alt="<?php echo htmlspecialchars($produto['nome']); ?>">
+            <h3><?php echo htmlspecialchars($produto['nome']); ?></h3>
+            <p>R$ <?php echo number_format($produto['preco'], 2, ',', '.'); ?></p>
+            <?php if (($produto['estoque'] ?? 0) > 0): ?>
+                <?php if ($produto['estoque'] <= 5): ?>
+                    <p class="aviso-estoque">Restam <?php echo $produto['estoque']; ?> unidades</p>
+                <?php endif; ?>
+                <form action="carrinho.html" method="post">
+                    <input type="hidden" name="acao" value="adicionar">
+                    <input type="hidden" name="produto_id" value="<?php echo $produto['id']; ?>">
+                    <input type="hidden" name="origem" value="produtos.html">
+                    <button type="submit">Comprar</button>
+                </form>
+            <?php else: ?>
+                <button type="button" class="btn-esgotado" disabled>Esgotado</button>
+            <?php endif; ?>
+        </article>
+    <?php endforeach; ?>
+</div>
+
+<?php require 'includes/footer.php'; ?>

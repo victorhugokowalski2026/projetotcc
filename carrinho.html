@@ -1,0 +1,123 @@
+<?php
+// ============================================================
+// LÓGICA (PHP) — equipe de back-end
+// Todo o processamento de formulário (POST) fica aqui em cima.
+// ============================================================
+require_once 'includes/banco_ficticio.php';
+
+$mensagem = '';
+$erro = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['acao'] === 'adicionar') {
+    $idProduto = intval($_POST['produto_id']);
+    $quantidade = isset($_POST['quantidade']) ? intval($_POST['quantidade']) : 1;
+    $ok = adicionarAoCarrinho($idProduto, $quantidade);
+
+    $origem = $_POST['origem'] ?? 'produtos.html';
+    $parametro = $ok ? 'adicionado=1' : 'semestoque=1';
+    header('Location: ' . $origem . '?' . $parametro);
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['acao'] === 'remover') {
+    removerDoCarrinho(intval($_POST['produto_id']));
+    header('Location: carrinho.html');
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['acao'] === 'atualizar') {
+    atualizarQuantidadeCarrinho(intval($_POST['produto_id']), intval($_POST['quantidade']));
+    header('Location: carrinho.html');
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['acao'] === 'finalizar') {
+    if (finalizarCompra()) {
+        $mensagem = 'Compra simulada finalizada com sucesso! Obrigado pela preferência.';
+    } else {
+        $erro = 'Não foi possível finalizar: um ou mais itens do carrinho não têm mais estoque suficiente. Ajuste as quantidades e tente novamente.';
+    }
+}
+
+// Dados já prontos pra exibir — a equipe de front-end só usa essas variáveis:
+// $itens (lista de produtos no carrinho), $total (valor somado),
+// $totalItens (quantidade), $mensagem e $erro (avisos).
+$itens = obterItensCarrinhoDetalhados();
+$total = array_sum(array_column($itens, 'subtotal'));
+$totalItens = contarItensCarrinho();
+
+$tituloPagina = 'Carrinho - Construlink';
+$paginaAtiva = 'carrinho';
+require 'includes/header.php';
+?>
+<!-- ============================================================
+     HTML/CSS — equipe de front-end mexe livremente aqui
+     ============================================================ -->
+
+<div class="carrinho">
+    <h2>Meu Carrinho</h2>
+
+    <?php if ($mensagem): ?>
+        <p class="mensagem-sucesso"><?php echo htmlspecialchars($mensagem); ?></p>
+    <?php endif; ?>
+
+    <?php if ($erro): ?>
+        <p class="mensagem-erro"><?php echo htmlspecialchars($erro); ?></p>
+    <?php endif; ?>
+
+    <?php if (empty($itens)): ?>
+        <p>Seu carrinho está vazio. <a href="produtos.html">Ver produtos</a></p>
+    <?php else: ?>
+        <table class="tabela-carrinho">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($itens as $item): ?>
+                    <tr>
+                        <td class="produto-nome">
+                            <img src="<?php echo htmlspecialchars($item['imagem']); ?>" alt="<?php echo htmlspecialchars($item['nome']); ?>">
+                            <?php echo htmlspecialchars($item['nome']); ?>
+                            <?php if ($item['quantidade'] >= $item['estoque']): ?>
+                                <span class="aviso-estoque">últimas unidades</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>R$ <?php echo number_format($item['preco'], 2, ',', '.'); ?></td>
+                        <td>
+                            <form action="carrinho.html" method="post" class="form-quantidade">
+                                <input type="hidden" name="acao" value="atualizar">
+                                <input type="hidden" name="produto_id" value="<?php echo $item['id']; ?>">
+                                <input type="number" name="quantidade" value="<?php echo $item['quantidade']; ?>" min="1" max="<?php echo $item['estoque']; ?>" onchange="this.form.submit()">
+                            </form>
+                        </td>
+                        <td>R$ <?php echo number_format($item['subtotal'], 2, ',', '.'); ?></td>
+                        <td>
+                            <form action="carrinho.html" method="post">
+                                <input type="hidden" name="acao" value="remover">
+                                <input type="hidden" name="produto_id" value="<?php echo $item['id']; ?>">
+                                <button type="submit" class="btn-remover">Remover</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <div class="carrinho-total">
+            <strong>Total: R$ <?php echo number_format($total, 2, ',', '.'); ?></strong>
+        </div>
+
+        <form action="carrinho.html" method="post">
+            <input type="hidden" name="acao" value="finalizar">
+            <button type="submit" class="oauthButton">Finalizar Compra</button>
+        </form>
+    <?php endif; ?>
+</div>
+
+<?php require 'includes/footer.php'; ?>
