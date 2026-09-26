@@ -216,3 +216,115 @@ function finalizarCompra() {
 
     return true;
 }
+
+// ============================================================
+// A partir daqui: funções usadas só pelo painel administrativo
+// (cadastro/edição/exclusão de produto, estoque, upload de imagem).
+// ============================================================
+
+/**
+ * Próximo id livre para um produto novo.
+ */
+function proximoIdProduto($catalogo) {
+    if (empty($catalogo)) {
+        return 1;
+    }
+    return max(array_keys($catalogo)) + 1;
+}
+
+/**
+ * Cria um novo produto no catálogo. $dados deve trazer pelo menos
+ * nome, preco, categoria, imagem e estoque. Retorna o id gerado.
+ */
+function adicionarProduto($dados) {
+    $catalogo = obterCatalogoProdutos();
+    $novoId = proximoIdProduto($catalogo);
+
+    $padrao = [
+        'nome'      => '',
+        'preco'     => 0,
+        'categoria' => '',
+        'imagem'    => '',
+        'ativo'     => true,
+        'destaque'  => false,
+        'promocao'  => false,
+        'estoque'   => 0,
+    ];
+
+    $catalogo[$novoId] = array_merge($padrao, $dados, ['id' => $novoId]);
+    salvarCatalogoProdutos($catalogo);
+
+    return $novoId;
+}
+
+/**
+ * Atualiza campos de um produto existente (mescla com o que já existe).
+ */
+function atualizarProduto($id, $dados) {
+    $catalogo = obterCatalogoProdutos();
+    if (!isset($catalogo[$id])) {
+        return false;
+    }
+    $catalogo[$id] = array_merge($catalogo[$id], $dados, ['id' => $id]);
+    salvarCatalogoProdutos($catalogo);
+    return true;
+}
+
+/**
+ * Remove um produto definitivamente do catálogo.
+ */
+function removerProduto($id) {
+    $catalogo = obterCatalogoProdutos();
+    if (!isset($catalogo[$id])) {
+        return false;
+    }
+    unset($catalogo[$id]);
+    salvarCatalogoProdutos($catalogo);
+    return true;
+}
+
+/**
+ * Ajusta o estoque de um produto para um valor exato (uso do admin;
+ * diferente do desconto automático feito em finalizarCompra()).
+ */
+function atualizarEstoque($id, $novoEstoque) {
+    $catalogo = obterCatalogoProdutos();
+    if (!isset($catalogo[$id])) {
+        return false;
+    }
+    $catalogo[$id]['estoque'] = max(0, (int) $novoEstoque);
+    salvarCatalogoProdutos($catalogo);
+    return true;
+}
+
+define('PASTA_UPLOADS', __DIR__ . '/../uploads/');
+define('EXTENSOES_IMAGEM_PERMITIDAS', ['jpg', 'jpeg', 'png', 'webp', 'gif']);
+
+/**
+ * Salva a imagem enviada pelo formulário do admin (campo <input type="file">)
+ * dentro da pasta /uploads. Retorna o caminho relativo (ex: "uploads/xyz.jpg")
+ * pra guardar no produto, ou null se o upload falhou/formato inválido.
+ */
+function salvarImagemProduto($arquivoEnviado) {
+    if (empty($arquivoEnviado['tmp_name']) || $arquivoEnviado['error'] !== UPLOAD_ERR_OK) {
+        return null;
+    }
+
+    $extensao = strtolower(pathinfo($arquivoEnviado['name'], PATHINFO_EXTENSION));
+    if (!in_array($extensao, EXTENSOES_IMAGEM_PERMITIDAS, true)) {
+        return null;
+    }
+
+    if (!is_dir(PASTA_UPLOADS)) {
+        mkdir(PASTA_UPLOADS, 0755, true);
+    }
+
+    $nomeArquivo = uniqid('produto_', true) . '.' . $extensao;
+    $destino = PASTA_UPLOADS . $nomeArquivo;
+
+    if (!move_uploaded_file($arquivoEnviado['tmp_name'], $destino)) {
+        return null;
+    }
+
+    return 'uploads/' . $nomeArquivo; // caminho relativo à raiz do site
+}
