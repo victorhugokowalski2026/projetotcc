@@ -2,116 +2,96 @@
 // ============================================================
 // LÓGICA (PHP) — equipe de back-end
 // ============================================================
-require_once 'includes/banco_ficticio.php';
+require_once '../includes/banco_ficticio.php';
+require_once '../includes/admin_auth.php';
+exigirLoginAdmin();
 
-$totalItens = contarItensCarrinho();
-$todosAtivos = listarProdutosAtivos();
-$destaques = array_filter($todosAtivos, function ($p) {
-    return isset($p['destaque']) && $p['destaque'] === true;
-});
-$promocoes = array_filter($todosAtivos, function ($p) {
-    return isset($p['promocao']) && $p['promocao'] === true;
-});
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['acao'] ?? '') === 'atualizar_estoque') {
+    $id = intval($_POST['produto_id']);
+    $novoEstoque = intval($_POST['estoque']);
+    atualizarEstoque($id, $novoEstoque);
+    header('Location: index.html?estoqueatualizado=1');
+    exit;
+}
 
-$tituloPagina = 'Construlink';
-$paginaAtiva = 'index';
-require 'includes/header.php';
-// A partir daqui e so HTML. O PHP que aparece so serve para IMPRIMIR
-// os dados que ja foram preparados ali em cima (destaques, promocoes).
-// Nao precisa mexer na logica pra estilizar.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['acao'] ?? '') === 'excluir') {
+    removerProduto(intval($_POST['produto_id']));
+    header('Location: index.html?excluido=1');
+    exit;
+}
+
+$produtos = obterCatalogoProdutos();
+
+$tituloPagina = 'Produtos - Admin Construlink';
+require '../includes/admin_header.php';
 ?>
 <!-- ============================================================
      HTML/CSS — equipe de front-end mexe livremente aqui
      ============================================================ -->
 
-<section id="inicio" class="banner">
-    <h2>Construa com Qualidade e Segurança</h2>
-    <p>Preço e Qualidade em um só lugar!</p>
-    <a href="produtos.html">Ver Produtos</a>
-</section>
+<div class="barra-acoes">
+    <h2>Produtos</h2>
+    <a href="produto-form.html" class="oauthButton" style="text-decoration:none;width:auto;padding:0 20px;">+ Novo produto</a>
+</div>
 
-<section id="categorias" class="categorias">
-    <h2>Categorias</h2>
+<?php if (isset($_GET['salvo'])): ?>
+    <p class="mensagem-sucesso">Produto salvo com sucesso!</p>
+<?php endif; ?>
+<?php if (isset($_GET['estoqueatualizado'])): ?>
+    <p class="mensagem-sucesso">Estoque atualizado!</p>
+<?php endif; ?>
+<?php if (isset($_GET['excluido'])): ?>
+    <p class="mensagem-sucesso">Produto excluído.</p>
+<?php endif; ?>
+<?php if (isset($_GET['erroimagem'])): ?>
+    <p class="mensagem-erro">Não foi possível salvar a imagem enviada (formato aceito: jpg, jpeg, png, webp, gif).</p>
+<?php endif; ?>
 
-    <a class="categoria" href="produtos.html?categoria=Cimento"><h3>Cimento</h3></a>
-    <a class="categoria" href="produtos.html?categoria=Tijolos"><h3>Tijolos</h3></a>
-    <a class="categoria" href="produtos.html?categoria=Ferramentas"><h3>Ferramentas</h3></a>
-    <a class="categoria" href="produtos.html?categoria=Tintas"><h3>Tintas</h3></a>
-    <a class="categoria" href="produtos.html?categoria=Elétrica"><h3>Elétrica</h3></a>
-</section>
+<?php if (empty($produtos)): ?>
+    <p>Nenhum produto cadastrado ainda.</p>
+<?php else: ?>
+    <table class="tabela-carrinho">
+        <thead>
+            <tr>
+                <th>Imagem</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Preço</th>
+                <th>Estoque</th>
+                <th>Ativo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($produtos as $produto): ?>
+                <tr>
+                    <td>
+                        <img class="miniatura" src="../<?php echo htmlspecialchars($produto['imagem']); ?>" alt="<?php echo htmlspecialchars($produto['nome']); ?>">
+                    </td>
+                    <td><?php echo htmlspecialchars($produto['nome']); ?></td>
+                    <td><?php echo htmlspecialchars($produto['categoria'] ?? '—'); ?></td>
+                    <td>R$ <?php echo number_format($produto['preco'], 2, ',', '.'); ?></td>
+                    <td>
+                        <form action="index.html" method="post" class="form-estoque">
+                            <input type="hidden" name="acao" value="atualizar_estoque">
+                            <input type="hidden" name="produto_id" value="<?php echo $produto['id']; ?>">
+                            <input type="number" name="estoque" value="<?php echo (int) ($produto['estoque'] ?? 0); ?>" min="0">
+                            <button type="submit">Salvar</button>
+                        </form>
+                    </td>
+                    <td><?php echo !empty($produto['ativo']) ? 'Sim' : 'Não'; ?></td>
+                    <td>
+                        <a class="link-admin" href="produto-form.html?id=<?php echo $produto['id']; ?>">Editar</a>
+                        <form action="index.html" method="post" style="display:inline;" onsubmit="return confirm('Excluir este produto definitivamente?');">
+                            <input type="hidden" name="acao" value="excluir">
+                            <input type="hidden" name="produto_id" value="<?php echo $produto['id']; ?>">
+                            <button type="submit" class="btn-remover">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>
 
-<section id="produtos" class="produtos">
-    <h2>Produtos em Destaque</h2>
-
-    <?php if (isset($_GET['adicionado'])): ?>
-        <p class="mensagem-sucesso">Produto adicionado ao carrinho!</p>
-    <?php endif; ?>
-    <?php if (isset($_GET['semestoque'])): ?>
-        <p class="mensagem-erro">Não há mais estoque suficiente desse produto.</p>
-    <?php endif; ?>
-
-    <?php foreach ($destaques as $produto): ?>
-        <article class="produto">
-            <img src="<?php echo htmlspecialchars($produto['imagem']); ?>" alt="<?php echo htmlspecialchars($produto['nome']); ?>">
-            <h3><?php echo htmlspecialchars($produto['nome']); ?></h3>
-            <p>R$ <?php echo number_format($produto['preco'], 2, ',', '.'); ?></p>
-            <?php if (($produto['estoque'] ?? 0) > 0): ?>
-                <?php if ($produto['estoque'] <= 5): ?>
-                    <p class="aviso-estoque">Restam <?php echo $produto['estoque']; ?> unidades</p>
-                <?php endif; ?>
-                <form action="carrinho.html" method="post">
-                    <input type="hidden" name="acao" value="adicionar">
-                    <input type="hidden" name="produto_id" value="<?php echo $produto['id']; ?>">
-                    <input type="hidden" name="origem" value="index.html">
-                    <button type="submit">Comprar</button>
-                </form>
-            <?php else: ?>
-                <button type="button" class="btn-esgotado" disabled>Esgotado</button>
-            <?php endif; ?>
-        </article>
-    <?php endforeach; ?>
-</section>
-
-<section id="promocoes" class="promocoes produtos">
-    <h2>Promoções</h2>
-
-    <?php foreach ($promocoes as $produto): ?>
-        <article class="produto">
-            <img src="<?php echo htmlspecialchars($produto['imagem']); ?>" alt="<?php echo htmlspecialchars($produto['nome']); ?>">
-            <h3><?php echo htmlspecialchars($produto['nome']); ?></h3>
-            <p>
-                <?php if (!empty($produto['precoAntigo'])): ?>
-                    <del>R$ <?php echo number_format($produto['precoAntigo'], 2, ',', '.'); ?></del>
-                <?php endif; ?>
-                <strong>R$ <?php echo number_format($produto['preco'], 2, ',', '.'); ?></strong>
-            </p>
-            <?php if (($produto['estoque'] ?? 0) > 0): ?>
-                <?php if ($produto['estoque'] <= 5): ?>
-                    <p class="aviso-estoque">Restam <?php echo $produto['estoque']; ?> unidades</p>
-                <?php endif; ?>
-                <form action="carrinho.html" method="post">
-                    <input type="hidden" name="acao" value="adicionar">
-                    <input type="hidden" name="produto_id" value="<?php echo $produto['id']; ?>">
-                    <input type="hidden" name="origem" value="index.html">
-                    <button type="submit">Comprar</button>
-                </form>
-            <?php else: ?>
-                <button type="button" class="btn-esgotado" disabled>Esgotado</button>
-            <?php endif; ?>
-        </article>
-    <?php endforeach; ?>
-</section>
-
-<section id="sobre" class="sobre">
-    <h2>Sobre a Construlink</h2>
-    <p>A Construlink é uma loja especializada em materiais para construção...</p>
-</section>
-
-<section id="contato" class="contato">
-    <h2>Contato</h2>
-    <p>Telefone: (44) 99774-2905</p>
-    <p>Email: contato@construlink.com.br</p>
-    <p>Endereço: Rua Arlindo Neves 355 - Centro</p>
-</section>
-
-<?php require 'includes/footer.php'; ?>
+<?php require '../includes/admin_footer.php'; ?>

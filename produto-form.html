@@ -1,0 +1,97 @@
+<?php
+// ============================================================
+// LÓGICA (PHP) — equipe de back-end
+// ============================================================
+require_once '../includes/banco_ficticio.php';
+require_once '../includes/admin_auth.php';
+exigirLoginAdmin();
+
+$id = isset($_GET['id']) ? intval($_GET['id']) : null;
+$produtoExistente = null;
+if ($id) {
+    $catalogo = obterCatalogoProdutos();
+    $produtoExistente = $catalogo[$id] ?? null;
+}
+$modoEdicao = $produtoExistente !== null;
+
+$categorias = ['Cimento', 'Tijolos', 'Ferramentas', 'Tintas', 'Elétrica'];
+
+$tituloPagina = $modoEdicao ? 'Editar produto - Admin Construlink' : 'Novo produto - Admin Construlink';
+require '../includes/admin_header.php';
+?>
+<!-- ============================================================
+     HTML/CSS — equipe de front-end mexe livremente aqui
+     ============================================================ -->
+
+<h2><?php echo $modoEdicao ? 'Editar produto' : 'Novo produto'; ?></h2>
+
+<?php if (isset($_GET['erroimagem'])): ?>
+    <p class="mensagem-erro">Não foi possível salvar a imagem enviada (formatos aceitos: jpg, jpeg, png, webp, gif).</p>
+<?php endif; ?>
+
+<form action="produto-salvar.html" method="post" enctype="multipart/form-data" class="form-admin">
+    <?php if ($modoEdicao): ?>
+        <input type="hidden" name="id" value="<?php echo $produtoExistente['id']; ?>">
+    <?php endif; ?>
+
+    <label>
+        Nome do produto
+        <input type="text" name="nome" value="<?php echo htmlspecialchars($produtoExistente['nome'] ?? ''); ?>" required>
+    </label>
+
+    <label>
+        Categoria
+        <select name="categoria">
+            <?php foreach ($categorias as $cat): ?>
+                <option value="<?php echo htmlspecialchars($cat); ?>" <?php echo (($produtoExistente['categoria'] ?? '') === $cat) ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($cat); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </label>
+
+    <label>
+        Preço (R$)
+        <input type="number" step="0.01" min="0" name="preco" value="<?php echo htmlspecialchars($produtoExistente['preco'] ?? ''); ?>" required>
+    </label>
+
+    <label>
+        Preço antigo (opcional — mostra riscado, para promoção)
+        <input type="number" step="0.01" min="0" name="precoAntigo" value="<?php echo htmlspecialchars($produtoExistente['precoAntigo'] ?? ''); ?>">
+    </label>
+
+    <label>
+        Estoque
+        <input type="number" min="0" name="estoque" value="<?php echo htmlspecialchars($produtoExistente['estoque'] ?? 0); ?>" required>
+    </label>
+
+    <label class="checkbox">
+        <input type="checkbox" name="destaque" <?php echo !empty($produtoExistente['destaque']) ? 'checked' : ''; ?>>
+        Mostrar em "Produtos em Destaque" na home
+    </label>
+
+    <label class="checkbox">
+        <input type="checkbox" name="promocao" <?php echo !empty($produtoExistente['promocao']) ? 'checked' : ''; ?>>
+        Mostrar em Promoções
+    </label>
+
+    <label class="checkbox">
+        <input type="checkbox" name="ativo" <?php echo ($produtoExistente === null || !empty($produtoExistente['ativo'])) ? 'checked' : ''; ?>>
+        Produto ativo (visível no site)
+    </label>
+
+    <label>
+        Imagem <?php echo $modoEdicao ? '(deixe em branco para manter a atual)' : ''; ?>
+        <input type="file" name="imagem" accept="image/*" <?php echo $modoEdicao ? '' : 'required'; ?>>
+    </label>
+
+    <?php if ($modoEdicao && !empty($produtoExistente['imagem'])): ?>
+        <p>Imagem atual:<br>
+            <img src="../<?php echo htmlspecialchars($produtoExistente['imagem']); ?>" style="width:100px;border-radius:4px;margin-top:6px;">
+        </p>
+    <?php endif; ?>
+
+    <button type="submit" class="oauthButton">Salvar produto</button>
+</form>
+
+<?php require '../includes/admin_footer.php'; ?>

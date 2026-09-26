@@ -1,0 +1,52 @@
+<?php
+require_once '../includes/banco_ficticio.php';
+require_once '../includes/admin_auth.php';
+exigirLoginAdmin();
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: index.html');
+    exit;
+}
+
+$id = (isset($_POST['id']) && $_POST['id'] !== '') ? intval($_POST['id']) : null;
+
+$dados = [
+    'nome'      => trim($_POST['nome'] ?? ''),
+    'categoria' => trim($_POST['categoria'] ?? ''),
+    'preco'     => floatval($_POST['preco'] ?? 0),
+    'estoque'   => intval($_POST['estoque'] ?? 0),
+    'destaque'  => isset($_POST['destaque']),
+    'promocao'  => isset($_POST['promocao']),
+    'ativo'     => isset($_POST['ativo']),
+];
+
+$precoAntigo = trim($_POST['precoAntigo'] ?? '');
+if ($precoAntigo !== '') {
+    $dados['precoAntigo'] = floatval($precoAntigo);
+}
+
+// Upload de imagem: opcional ao editar (mantém a atual se não enviar nada),
+// obrigatório ao cadastrar um produto novo.
+$novaImagem = null;
+if (!empty($_FILES['imagem']['name'])) {
+    $novaImagem = salvarImagemProduto($_FILES['imagem']);
+    if ($novaImagem === null) {
+        $voltaPara = $id ? ('produto-form.html?id=' . $id . '&erroimagem=1') : 'produto-form.html?erroimagem=1';
+        header('Location: ' . $voltaPara);
+        exit;
+    }
+    $dados['imagem'] = $novaImagem;
+}
+
+if ($id) {
+    atualizarProduto($id, $dados);
+} else {
+    if ($novaImagem === null) {
+        header('Location: produto-form.html?erroimagem=1');
+        exit;
+    }
+    adicionarProduto($dados);
+}
+
+header('Location: index.html?salvo=1');
+exit;

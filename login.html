@@ -1,0 +1,59 @@
+<?php
+// ============================================================
+// LÓGICA (PHP)
+// ============================================================
+require_once '../includes/banco_ficticio.php';
+require_once '../includes/admin_auth.php';
+
+$erro = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $usuario = $_POST['usuario'] ?? '';
+    $senha = $_POST['senha'] ?? '';
+
+    if (autenticarAdmin($usuario, $senha)) {
+        header('Location: index.html');
+        exit;
+    }
+    $erro = 'Usuário ou senha inválidos.';
+}
+?>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <title>Login admin - Construlink</title>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Construlink Admin</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="contato">
+            <h2>Login administrativo</h2>
+
+            <?php if ($erro): ?>
+                <p class="mensagem-erro"><?php echo htmlspecialchars($erro); ?></p>
+            <?php endif; ?>
+
+            <form method="post" class="form">
+                <p>Acesso restrito<span>Somente equipe Construlink</span></p>
+                <input type="text" name="usuario" placeholder="Usuário" required autofocus>
+                <input type="password" name="senha" placeholder="Senha" required>
+                <button type="submit" class="oauthButton">Entrar</button>
+            </form>
+
+            <p><a href="../index.html">&larr; Voltar para o site</a></p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Construlink - Painel administrativo</p>
+    </footer>
+</body>
+</html>
